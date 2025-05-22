@@ -1,6 +1,7 @@
 <?php
 /*
-this api will allow you to
+This api will allow you to get info from local api without exposing to public
+
 */
 namespace App\Controllers;
 
@@ -25,8 +26,31 @@ class Api extends BaseController
     return $this->ipfsapi("repo/stat",null);
   }
 
+  //peers info
+  public function peers(){
+    #lets set  to  1000ms
+    return $this->ipfsapi("swarm/peers?verbose=true&timeout=1000ms",null);
+  }
 
-  private function ipfsapi($url,$post_data){
+  #ls files
+  public function ls($arg=null){
+    if($arg == "" || $arg==NULL){
+      $arg = "%2F";
+    }
+
+    return $this->ipfsapi("ls?arg=".$arg,null);
+  }
+
+  //GET FILES
+  public function files(){
+    $fl = json_decode($this->ipfsapi("files/stat?arg=/",null));
+    #get hash
+    $fl->Hash;
+    return $this->ls($fl->Hash);
+  }
+
+
+  private function ipfsapi($url,$post_data=null){
     $apiurl =  env("IPFS_API").$url;
 
     $ch=curl_init();
