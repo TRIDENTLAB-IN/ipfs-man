@@ -16,3 +16,9 @@ application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess
 /vendor/
+.env
+writable/cache/*
+writable/logs/*
+writable/session/*
+writable/debugbar/*
+public/static/data/*.json
