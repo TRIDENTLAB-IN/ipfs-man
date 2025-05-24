@@ -60,7 +60,7 @@ class Tasker extends BaseController
          }
 
        }else{
-         
+
          $total_bw_json->$tt_time = array("in"=>$tdbw_json_obj->TotalIn,"out"=>$tdbw_json_obj->TotalOut);
 
        }
