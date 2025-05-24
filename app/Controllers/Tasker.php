@@ -12,6 +12,54 @@ class Tasker extends BaseController
 
    }
 
+   public function knownpeers(){
+     //this stores  the  connected  peer id in json to used connect them back later
+     $peer_obj =   json_decode(ccal("swarm/peers?verbose=true&timeout=5000ms"));
+
+     $currrent_peers = array();
+     foreach ($peer_obj->Peers as  $peer) {
+       $peer_id = $peer->Peer;
+       $addr = $peer->Addr;
+       $latency = $peer->Latency;
+       $currrent_peers[$peer_id] = array("pubtime"=>time(),"addr"=>$addr,"latency"=>$latency,"city"=>"","country"=>"");
+     }
+
+
+     $knownpeers_file = FCPATH.'static/data/knownpeers.json';
+     //is  knownpeers file exist
+    if(file_exists($knownpeers_file)){
+      $known_peers_obj = json_decode(file_get_contents($knownpeers_file));
+      //check is  this peer exist ?
+      foreach ($currrent_peers as $key => $c_peers) {
+        if(!property_exists($known_peers_obj,$key)){
+          $known_peers_obj->$key = $c_peers; //lets add the peers
+        }
+      }
+      foreach ($known_peers_obj as $key => $k_peer_obj) {
+        if(empty($k_peer_obj->city)){
+          //lets get ip info
+          $addr = explode("/",$k_peer_obj->addr)[2];
+
+
+          $ip_data = json_decode(file_get_contents("https://api.tridentlab.in/ipinfo/".$addr));
+          $known_peers_obj->$key->city =$ip_data->city;
+          $known_peers_obj->$key->country =$ip_data->country;
+
+        }
+
+      }
+
+
+
+      echo file_put_contents($knownpeers_file,json_encode($known_peers_obj));
+    }else{
+       echo file_put_contents($knownpeers_file,json_encode($currrent_peers));
+    }
+
+
+
+   }
+
 
    public function bandwidth(){
      #record Bandwidth every 5 min. @ new  date  only store  max/last bandwidth in /out  in total file
