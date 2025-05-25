@@ -10,6 +10,8 @@
     <link rel="stylesheet" type="text/css" href="static/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="static/css/skin.css">
     <script src="static/js/jquery.min.js" type="text/javascript"></script>
+    <script src="static/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+    <script src="static/js/chart.v4.js" type="text/javascript"></script>
 
 
 
@@ -19,6 +21,8 @@
 </head>
 <body >
   <section class="container-fluid ">
+    <div class="row">
+      <div class="col-lg-6">
     <div class="card border-0">
 
       <div class="card-body border-0">
@@ -28,6 +32,8 @@
 
       </div>
 
+    </div>
+    </div>
     </div>
 
   </section>
@@ -51,7 +57,7 @@ var old_bandwidth = JSON.parse('<?php echo json_encode($bandwidth);?>');
 
 
 
-<script src="static/js/bootstrap.bundle.min.js" type="text/javascript"></script>
+
 <script src="static/js/dashboard.js" type="text/javascript"></script>
 
 </body>
