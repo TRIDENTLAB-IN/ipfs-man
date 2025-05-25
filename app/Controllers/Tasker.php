@@ -39,10 +39,16 @@ class Tasker extends BaseController
         if(empty($k_peer_obj->city)){
           //lets get ip info
           if(isset($k_peer_obj->addr)){
-            $addr = explode("/",$k_peer_obj->addr)[2];
-            $ip_data = json_decode(file_get_contents("https://api.tridentlab.in/ipinfo/".$addr));
-            $known_peers_obj->$key->city =$ip_data->city;
-            $known_peers_obj->$key->country =$ip_data->country;
+            try{
+              $addr = explode("/",$k_peer_obj->addr)[2];
+              $ip_data = json_decode(file_get_contents("https://api.tridentlab.in/ipinfo/".$addr));
+              $known_peers_obj->$key->city =$ip_data->city;
+              $known_peers_obj->$key->country =$ip_data->country;
+
+            }catch(Exception $e) {
+              echo 'Message: ' .$e->getMessage();
+            }
+
           }
 
         }
