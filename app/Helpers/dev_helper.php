@@ -5,6 +5,7 @@ function ccal($url,$post_data=null){
   $ch=curl_init();
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
   curl_setopt($ch, CURLOPT_URL, $apiurl);
+  curl_setopt($ch, CURLOPT_TIMEOUT, 10); //10 sec  time out
 
   // post_data
   curl_setopt($ch, CURLOPT_POST, true);
