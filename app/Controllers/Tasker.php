@@ -25,7 +25,7 @@ class Tasker extends BaseController
      }
 
 
-     $knownpeers_file = FCPATH.'static/data/knownpeers.json';
+    $knownpeers_file = FCPATH.'static/data/knownpeers.json';
      //is  knownpeers file exist
     if(file_exists($knownpeers_file)){
       $known_peers_obj = json_decode(file_get_contents($knownpeers_file));
@@ -38,12 +38,12 @@ class Tasker extends BaseController
       foreach ($known_peers_obj as $key => $k_peer_obj) {
         if(empty($k_peer_obj->city)){
           //lets get ip info
-          $addr = explode("/",$k_peer_obj->addr)[2];
-
-
-          $ip_data = json_decode(file_get_contents("https://api.tridentlab.in/ipinfo/".$addr));
-          $known_peers_obj->$key->city =$ip_data->city;
-          $known_peers_obj->$key->country =$ip_data->country;
+          if(isset($k_peer_obj->addr)){
+            $addr = explode("/",$k_peer_obj->addr)[2];
+            $ip_data = json_decode(file_get_contents("https://api.tridentlab.in/ipinfo/".$addr));
+            $known_peers_obj->$key->city =$ip_data->city;
+            $known_peers_obj->$key->country =$ip_data->country;
+          }
 
         }
 
@@ -95,37 +95,31 @@ class Tasker extends BaseController
      $total_bandwidth_file =   FCPATH.'static/data/ttbw.json';
      if(file_exists($total_bandwidth_file)){
 
+
        $total_bw_json = json_decode(file_get_contents($total_bandwidth_file));
+       //is last object today ?
+       $last_ttbw_obj = $total_bw_json[count($total_bw_json)-1];
 
 
-       //check if the day entry exist
-       if(property_exists($total_bw_json,$tt_time)){
-
-
-         if($total_bw_json->$tt_time->in < $tdbw_json_obj->TotalIn){
-           $total_bw_json->$tt_time->in = $tdbw_json_obj->TotalIn;
-           $total_bw_json->$tt_time->out = $tdbw_json_obj->TotalOut;
+       if($last_ttbw_obj->time == $tt_time){
+         //its today data
+         if($last_ttbw_obj->in < $tdbw_json_obj->TotalIn){
+           $total_bw_json[count($total_bw_json)-1]->in =$tdbw_json_obj->TotalIn;
+           $total_bw_json[count($total_bw_json)-1]->out =$tdbw_json_obj->TotalOut;
          }
 
        }else{
+         //insert today data
 
-         $total_bw_json->$tt_time = array("in"=>$tdbw_json_obj->TotalIn,"out"=>$tdbw_json_obj->TotalOut);
-
-       }
-       echo file_put_contents($total_bandwidth_file,json_encode($total_bw_json));
+         array_push($total_bw_json, array("time"=>$tt_time,"in"=>$tdbw_json_obj->TotalIn,"out"=>$tdbw_json_obj->TotalOut));
+      }
 
 
      }else{
        $bw_data= array();
-       $bw_data[0]=array("in"=>0,"out"=>0);
-       $bw_data[$tt_time] = array("in"=>$tdbw_json_obj->TotalIn,"out"=>$tdbw_json_obj->TotalOut);
+       $bw_data[] = array("time"=>$tt_time,"in"=>$tdbw_json_obj->TotalIn,"out"=>$tdbw_json_obj->TotalOut);
        echo file_put_contents($total_bandwidth_file,json_encode($bw_data));
      }
-
-
-
-
-
 
 
    }
