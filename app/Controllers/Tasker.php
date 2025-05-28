@@ -125,6 +125,7 @@ class Tasker extends BaseController
 
          array_push($total_bw_json, array("time"=>$tt_time,"in"=>$tdbw_json_obj->TotalIn,"out"=>$tdbw_json_obj->TotalOut));
       }
+       echo file_put_contents($total_bandwidth_file,json_encode($total_bw_json));
 
 
      }else{
