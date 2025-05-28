@@ -33,6 +33,8 @@ class Tasker extends BaseController
       foreach ($currrent_peers as $key => $c_peers) {
         if(!property_exists($known_peers_obj,$key)){
           $known_peers_obj->$key = $c_peers; //lets add the peers
+        }else{
+            $known_peers_obj->$key->pubtime=time();
         }
       }
       foreach ($known_peers_obj as $key => $k_peer_obj) {
@@ -125,6 +127,7 @@ class Tasker extends BaseController
 
          array_push($total_bw_json, array("time"=>$tt_time,"in"=>$tdbw_json_obj->TotalIn,"out"=>$tdbw_json_obj->TotalOut));
       }
+       echo file_put_contents($total_bandwidth_file,json_encode($total_bw_json));
 
 
      }else{

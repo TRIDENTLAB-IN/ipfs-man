@@ -3,13 +3,17 @@
   *
   */
 
+  let inData = [0];
+  let outData = [0];
+  let labels =[""];
+  let bw_chart;
 function bandwidth(){
 
-  const inData = old_bandwidth.map(item => (item.in/1024));
-  const outData = old_bandwidth.map(item => (item.out/1024));
-  const labels = old_bandwidth.map(item => { return uxdt(item.time)});
+   inData = old_bandwidth.map(item => (-parseFloat(item.out/1048576)));
+   outData = old_bandwidth.map(item => (item.in/1048576));
+   labels = old_bandwidth.map(item => { return uxdt(item.time)});
   const ctx = document.getElementById('bandwidth_graph').getContext('2d');
-  new Chart(ctx, {
+  bw_chart = new Chart(ctx, {
             type: 'line', // You can also use 'bar' for bar chart
             data: {
                 labels: labels,
@@ -19,7 +23,7 @@ function bandwidth(){
                         data: inData,
                         borderColor: 'rgb(75, 192, 192)',
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        tension: 0.1,
+                        tension: 0.8,
                         fill: true // Set to true if you want the area under the line filled
                     },
                     {
@@ -27,13 +31,14 @@ function bandwidth(){
                         data: outData,
                         borderColor: 'rgb(255, 99, 132)',
                         backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        tension: 0.1,
+                        tension: 0.8,
                         fill: true // Set to true if you want the area under the line filled
                     }
                 ]
             },
             options: {
                 responsive: true,
+                stacked: false,
                 plugins: {
                     title: {
                         display: true,
@@ -54,18 +59,30 @@ function bandwidth(){
                     y: {
                         title: {
                             display: true,
-                            text: 'Value'
+                            text: 'In MB'
                         },
                         beginAtZero: true // Ensures the Y-axis starts from zero
                     }
                 }
             }
         });
-
-
-
 }
 
+function update_bw(){
+  $.getJSON('api/bw',function(data){
+    inData[inData.length - 1]=-parseFloat(data.TotalOut/1048576);
+    outData[outData.length - 1]=data.TotalIn/1048576;
+    bw_chart.update();
+  })
+}
+
+function getFlagEmoji(countryCode) {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split('')
+    .map(char =>  127397 + char.charCodeAt());
+  return String.fromCodePoint(...codePoints);
+}
 
 function unixt(){
   var unixTimestampMs =  Math.floor(Date.now() / 1000);
@@ -79,10 +96,14 @@ function uxdt(unix_time_stamp){
 }
 
 function init_pollers(){
-  var bw = setTimeout(bandwidth(),2500);
+  setInterval(update_bw,10000);
 
 }
 
+
+
+
 document.addEventListener("DOMContentLoaded", (event) => {
   init_pollers();
+  bandwidth();
 });
