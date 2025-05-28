@@ -43,8 +43,6 @@
   $tdbw = json_decode(file_get_contents(FCPATH."static/data/tdbw.json"));
   $bandwidth = array_merge($ttbw,$tdbw);
 
-
-
 ?>
 <script>
 var old_bandwidth = JSON.parse('<?php echo json_encode($bandwidth);?>');

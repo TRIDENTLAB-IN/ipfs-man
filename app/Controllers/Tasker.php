@@ -33,6 +33,8 @@ class Tasker extends BaseController
       foreach ($currrent_peers as $key => $c_peers) {
         if(!property_exists($known_peers_obj,$key)){
           $known_peers_obj->$key = $c_peers; //lets add the peers
+        }else{
+            $known_peers_obj->$key->pubtime=time();
         }
       }
       foreach ($known_peers_obj as $key => $k_peer_obj) {
