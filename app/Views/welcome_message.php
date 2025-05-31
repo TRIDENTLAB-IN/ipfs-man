@@ -13,13 +13,12 @@
     <script src="static/js/bootstrap.bundle.min.js" type="text/javascript"></script>
     <script src="static/js/chart.v4.js" type="text/javascript"></script>
 
-
-
-
-
-
 </head>
 <body >
+
+
+
+
   <section class="container-fluid ">
     <div class="row">
       <div class="col-lg-6">

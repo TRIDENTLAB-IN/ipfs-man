@@ -11,9 +11,13 @@ class Api extends BaseController
   {
     return "aarya.dev";
   }
-  public function id(){
-
-    return $this->ipfsapi("id",null);
+  public function id($peerid=null){
+    if(isset($peerid)){
+      $id_url = "id/".$peerid;
+    }else{
+      $id_url = "id";
+    }
+    return $this->ipfsapi($id_url,null);
   }
   public function bw(){
 
