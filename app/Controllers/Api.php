@@ -17,11 +17,11 @@ class Api extends BaseController
     }else{
       $id_url = "id";
     }
-    return $this->ipfsapi($id_url,null);
+    return ccal($id_url,null);
   }
   public function bw(){
 
-    return $this->ipfsapi("stats/bw",null);
+    return ccal("stats/bw",null);
   }
 
 
