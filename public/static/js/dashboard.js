@@ -7,7 +7,19 @@
   let outData = [0];
   let labels =[""];
   let bw_chart;
+  let old_bandwidth=[];
+
+
+function fetch_old_bandwidth(){
+  $.getJSON('static/data/tdbw.json',function(data){
+    old_bandwidth = data;
+  }).done(function(){
+    bandwidth();
+  })
+}
+
 function bandwidth(){
+
 
    inData = old_bandwidth.map(item => (-parseFloat(item.out/1048576)));
    outData = old_bandwidth.map(item => (item.in/1048576));
@@ -72,6 +84,7 @@ function update_bw(){
   $.getJSON('api/bw',function(data){
     inData[inData.length - 1]=-parseFloat(data.TotalOut/1048576);
     outData[outData.length - 1]=data.TotalIn/1048576;
+    labels[ labels.length - 1]  = uxdt(unixt());
     bw_chart.update();
   })
 }
@@ -105,5 +118,5 @@ function init_pollers(){
 
 document.addEventListener("DOMContentLoaded", (event) => {
   init_pollers();
-  bandwidth();
+  fetch_old_bandwidth();
 });

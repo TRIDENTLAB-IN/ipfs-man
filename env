@@ -32,11 +32,11 @@ IPFS_API = 'localhost:5001'
 # DATABASE
 #--------------------------------------------------------------------
 
-# database.default.hostname = localhost
-# database.default.database = ci4
+#database.default.hostname = localhost
+#database.default.database = ./writable/ipfsman.sqlite3
 # database.default.username = root
 # database.default.password = root
-# database.default.DBDriver = MySQLi
+#database.default.DBDriver = SQLite3
 # database.default.DBPrefix =
 # database.default.port = 3306
 

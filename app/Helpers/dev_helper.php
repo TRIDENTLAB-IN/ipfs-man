@@ -1,6 +1,7 @@
 <?php
 function ccal($url,$post_data=null){
-  $apiurl =  env("IPFS_API").$url;
+  $apiurl =  env("IPFS_API").'/api/v0/'.$url;
+
 
   $ch=curl_init();
   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

@@ -4,26 +4,48 @@ Tasker for specific action and jobs
 
 */
 namespace App\Controllers;
+use App\Models\Inda;
 
 class Tasker extends BaseController
 {
 
+  public function __construct(){
+    $this->inda =  new Inda();
+  }
+
+
    public function index(){
+
 
    }
 
    public function knownpeers(){
+     $peer_res = ccal("swarm/peers?verbose=true&timeout=10000ms");
+     if(!$peer_res){
+       echo "ipfs  offline";
+       exit();
+     }
      //this stores  the  connected  peer id in json to used connect them back later
-     $peer_obj =   json_decode(ccal("swarm/peers?verbose=true&timeout=5000ms"));
+     $peer_obj =   json_decode($peer_res);
 
      $currrent_peers = array();
      foreach ($peer_obj->Peers as  $peer) {
-       $peer_id = $peer->Peer;
-       $addr = $peer->Addr;
-       $latency = $peer->Latency;
-       $currrent_peers[$peer_id] = array("pubtime"=>time(),"addr"=>$addr,"latency"=>$latency,"city"=>"","country"=>"");
+       $peer_row = $this->inda->fetch_peer(array("peerid"=>$peer->Peer));
+       if($peer_row){
+         //lets  update time
+         $this->inda->update_peer(array("id"=>$peer_row->id),array("pubtime"=>time()));
+
+
+       }else{
+
+         $this->inda->add_peer($peer);
+       }
+
+
+
      }
 
+/*
 
     $knownpeers_file = FCPATH.'static/data/knownpeers.json';
      //is  knownpeers file exist
@@ -71,6 +93,11 @@ class Tasker extends BaseController
     }
 
 
+*/
+
+
+ $peercount = FCPATH.'static/data/peercount.txt';
+  echo file_put_contents($peercount,count($peer_obj->Peers));
 
    }
 
@@ -78,6 +105,11 @@ class Tasker extends BaseController
    public function bandwidth(){
      #record Bandwidth every 5 min. @ new  date  only store  max/last bandwidth in /out  in total file
      $bw = ccal("stats/bw");
+     if(!$bw){
+       echo "ipfs  offline";
+       exit();
+     }
+
      $tdbw_json_obj = json_decode($bw);
      $today_bandwidth = FCPATH.'static/data/tdbw.json';
      if(file_exists($today_bandwidth)){
@@ -106,36 +138,13 @@ class Tasker extends BaseController
      //total exchange  of the day
 
      $tt_time = mktime(0,0,0,date("m"),date("d"),date("Y"));
-     $total_bandwidth_file =   FCPATH.'static/data/ttbw.json';
-     if(file_exists($total_bandwidth_file)){
+     $bw_obj = $this->inda->get_bw(array("pubtime"=>$tt_time));
+     if($bw_obj){
 
-
-       $total_bw_json = json_decode(file_get_contents($total_bandwidth_file));
-       //is last object today ?
-       $last_ttbw_obj = $total_bw_json[count($total_bw_json)-1];
-
-
-       if($last_ttbw_obj->time == $tt_time){
-         //its today data
-         if($last_ttbw_obj->in < $tdbw_json_obj->TotalIn){
-           $total_bw_json[count($total_bw_json)-1]->in =$tdbw_json_obj->TotalIn;
-           $total_bw_json[count($total_bw_json)-1]->out =$tdbw_json_obj->TotalOut;
-         }
-
-       }else{
-         //insert today data
-
-         array_push($total_bw_json, array("time"=>$tt_time,"in"=>$tdbw_json_obj->TotalIn,"out"=>$tdbw_json_obj->TotalOut));
-      }
-       echo file_put_contents($total_bandwidth_file,json_encode($total_bw_json));
-
-
+       $this->inda->update_bw(array("id"=>$bw_obj->id),array("totalin"=>$tdbw_json_obj->TotalIn,"totalout"=>$tdbw_json_obj->TotalOut));
      }else{
-       $bw_data= array();
-       $bw_data[] = array("time"=>$tt_time,"in"=>$tdbw_json_obj->TotalIn,"out"=>$tdbw_json_obj->TotalOut);
-       echo file_put_contents($total_bandwidth_file,json_encode($bw_data));
+       $this->inda->add_bw(array("pubtime"=>$tt_time,"totalin"=>$tdbw_json_obj->TotalIn,"totalout"=>$tdbw_json_obj->TotalOut));
      }
-
-
    }
+
 }
