@@ -38,6 +38,10 @@ class Inda extends Model {
 
   }
 
+  public function fetch_peer_list($limit=10){
+    return $this->db->table("peers")->limit($limit)->orderBy("pubtime","DESC")->get()->getResultArray();
+  }
+
   #bandwidth data
 
   public function get_bw($where){
@@ -50,6 +54,11 @@ class Inda extends Model {
 
   public function add_bw($in_data){
     $this->db->table("bandwidth")->insert($in_data);
+  }
+
+  public function peerloc(){
+     return $this->db->table("peers")->select("cc, COUNT(*) as total")->groupBy("cc")->get()->getResultArray();
+    
   }
 
 

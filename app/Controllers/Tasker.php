@@ -18,7 +18,6 @@ class Tasker extends BaseController
 
 
    }
-
    public function knownpeers(){
      $peer_res = ccal("swarm/peers?verbose=true&timeout=10000ms");
      if(!$peer_res){
@@ -34,73 +33,16 @@ class Tasker extends BaseController
        if($peer_row){
          //lets  update time
          $this->inda->update_peer(array("id"=>$peer_row->id),array("pubtime"=>time()));
-
-
        }else{
-
          $this->inda->add_peer($peer);
        }
 
-
-
      }
-
-/*
-
-    $knownpeers_file = FCPATH.'static/data/knownpeers.json';
-     //is  knownpeers file exist
-    if(file_exists($knownpeers_file)){
-      $known_peers_obj = json_decode(file_get_contents($knownpeers_file));
-      //check is  this peer exist ?
-      foreach ($currrent_peers as $key => $c_peers) {
-        if(!property_exists($known_peers_obj,$key)){
-          $known_peers_obj->$key = $c_peers; //lets add the peers
-        }else{
-            $known_peers_obj->$key->pubtime=time();
-        }
-      }
-      foreach ($known_peers_obj as $key => $k_peer_obj) {
-        if(empty($k_peer_obj->city)){
-          //lets get ip info
-          if(isset($k_peer_obj->addr)){
-            try{
-              $addr = explode("/",$k_peer_obj->addr)[2];
-              $ip_data = json_decode(file_get_contents("https://api.tridentlab.in/ipinfo/".$addr));
-              if(isset($ip_data->city)){
-                $known_peers_obj->$key->city =$ip_data->city;
-              }
-              if(isset($ip_data->country)){
-                $known_peers_obj->$key->country =$ip_data->country;
-              }
-
-
-
-            }catch(Exception $e) {
-              echo 'Message: ' .$e->getMessage();
-            }
-
-          }
-
-        }
-
-      }
-
-
-
-      echo file_put_contents($knownpeers_file,json_encode($known_peers_obj));
-    }else{
-       echo file_put_contents($knownpeers_file,json_encode($currrent_peers));
-    }
-
-
-*/
-
 
  $peercount = FCPATH.'static/data/peercount.txt';
   echo file_put_contents($peercount,count($peer_obj->Peers));
 
    }
-
 
    public function bandwidth(){
      #record Bandwidth every 5 min. @ new  date  only store  max/last bandwidth in /out  in total file
@@ -147,4 +89,10 @@ class Tasker extends BaseController
      }
    }
 
+
+   public function genpeerloc(){
+
+     echo file_put_contents(FCPATH.'static/data/peerloc.json',json_encode($this->inda->peerloc()));
+
+   }
 }

@@ -108,10 +108,58 @@ function uxdt(unix_time_stamp){
 
 }
 
-function init_pollers(){
-  setInterval(update_bw,10000);
+function uploc(){
+  $.get('peers/uploc',function(data){
+    console.log(data)
+  })
 
 }
+
+function init_pollers(){
+  setInterval(update_bw,10000);
+  setInterval(uploc,2000);
+
+}
+
+function  peer_loc_chart(){
+  $.getJSON('static/data/peerloc.json?u='+unixt(),function(data){
+
+
+    let  peer_loc_pie = document.getElementById('peers_loc_chart').getContext('2d');
+
+    let pi_lable = []
+    let pi_data = []
+    data.forEach((item, i) => {
+
+      pi_lable.push(item.cc)
+      pi_data.push(item.total)
+    });
+
+     new Chart(peer_loc_pie, {type: 'pie',data:{
+       labels:  pi_lable,
+  datasets: [{
+
+    data: pi_data,
+
+    hoverOffset: 4
+  }]
+},options: {
+    plugins: {
+        legend: {
+            display: true
+        }
+    }
+}});
+
+
+
+
+
+
+  });
+
+}
+
 
 
 
@@ -119,4 +167,5 @@ function init_pollers(){
 document.addEventListener("DOMContentLoaded", (event) => {
   init_pollers();
   fetch_old_bandwidth();
+  peer_loc_chart();
 });

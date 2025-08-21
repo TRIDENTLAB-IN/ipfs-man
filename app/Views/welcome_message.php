@@ -33,6 +33,18 @@
 
     </div>
     </div>
+    <div class="col-lg-3">
+  <div class="card border-0">
+
+    <div class="card-body border-0">
+      <h6>Peers Location</h6>
+      <canvas id="peers_loc_chart">
+      </canvas>
+
+    </div>
+
+  </div>
+  </div>
     </div>
 
   </section>

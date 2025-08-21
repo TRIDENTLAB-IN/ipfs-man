@@ -19,15 +19,15 @@
 
 
   <?php
-  $peers = json_decode(file_get_contents(FCPATH."static/data/knownpeers.json"));
-  foreach ($peers as $peer_id => $peer_info) {
+
+  foreach ($peer_list as  $peer_info) {
 
     echo '<tr>
       <th scope="row"></th>
-      <td><span class="cc" data-cc="'.$peer_info->country.'"></span> '.$peer_info->city.'/'.$peer_info->country.'</td>
-      <td>'.$peer_id.'</td>
-      <td>'.$peer_info->latency.'</td>
-      <td>'.date("h:i A, d-M-Y ,D",$peer_info->pubtime).'</td>
+      <td><span class="cc" data-cc="'.$peer_info["cc"].'"></span> '.$peer_info["location"].'/'.$peer_info["cc"].'</td>
+      <td>'.$peer_info["peerid"].'</td>
+      <td>'.$peer_info["latency"].'ms</td>
+      <td>'.date("h:i A, d-M-Y ,D",$peer_info["pubtime"]).'</td>
 
 
     </tr>';

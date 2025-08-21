@@ -20,7 +20,9 @@ CI_ENVIRONMENT = development
 # APP
 #--------------------------------------------------------------------
 
-IPFS_API = 'localhost:5001'
+IPFS_API = 'http://localhost:5001'
+
+app.appTimezone = 'Asia/Kolkata'
 
 # app.baseURL = ''
 # If you have trouble with `.`, you could also use `_`.
